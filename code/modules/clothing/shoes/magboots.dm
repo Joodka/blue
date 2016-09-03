@@ -75,3 +75,14 @@
 	if(item_flags & NOSLIP)
 		state = "enabled"
 	user << "Its mag-pulse traction system appears to be [state]."
+
+/obj/item/clothing/shoes/magboots/advanced
+	desc = "Advanced magnetic boots that have a lighter magnetic pull, placing less burden on the wearer."
+	name = "advanced magboots"
+	icon_state = "advmag0"
+	icon_base = "advmag"
+
+/obj/item/clothing/shoes/magboots/advanced/set_slowdown()
+	slowdown = shoes? max(SHOES_SLOWDOWN, shoes.slowdown): SHOES_SLOWDOWN	//So you can't put on magboots to make you walk faster.
+	if (magpulse)
+		slowdown += 2
