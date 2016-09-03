@@ -1802,6 +1802,10 @@ area/crew_quarters/barman
 	name = "\improper Patient E"
 	icon_state = "medbay_patient_room_e"
 
+/area/medical/shower
+	name = "\improper Medbay Toilet"
+	icon_state = "patients"
+
 /area/medical/patient_wing
 	name = "\improper Patient Wing"
 	icon_state = "patients"
@@ -2160,6 +2164,10 @@ area/crew_quarters/barman
 /area/rnd/misc_lab
 	name = "\improper Miscellaneous Research"
 	icon_state = "toxmisc"
+
+/area/rnd/res_break
+	name = "\improper Research Break Room"
+	icon_state = "res_break"
 
 /area/toxins/server
 	name = "\improper Server Room"
