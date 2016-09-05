@@ -2033,6 +2033,7 @@
 #include "code\ZAS\Zone.dm"
 #include "interface\interface.dm"
 #include "interface\skin.dmf"
+#include "maps\map.dmm"
 #include "maps\polaris-1.dmm"
 #include "maps\polaris-2.dmm"
 #include "maps\polaris-3.dmm"
