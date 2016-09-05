@@ -712,6 +712,8 @@
 					/obj/item/weapon/reagent_containers/food/snacks/sosjerky = 2,/obj/item/weapon/reagent_containers/food/snacks/no_raisin = 1,/obj/item/weapon/reagent_containers/food/snacks/spacetwinkie = 1,
 					/obj/item/weapon/reagent_containers/food/snacks/cheesiehonkers = 1, /obj/item/weapon/reagent_containers/food/snacks/tastybread = 2, /obj/item/weapon/reagent_containers/food/snacks/skrellsnacks = 4)
 
+/obj/machinery/vending/snack/wallmounted
+	icon_state = "snack_wall"
 
 
 /obj/machinery/vending/cola
@@ -795,6 +797,8 @@
 					/obj/item/weapon/storage/box/matches = 1,
 					/obj/item/weapon/flame/lighter/random = 2)
 
+/obj/machinery/vending/cigarette/wallmounted
+	icon_state = "cigs_wall"
 
 /obj/machinery/vending/medical
 	name = "NanoMed Plus"

@@ -669,11 +669,6 @@
 		icon_state = "ears_plain" //Sprites should be blank. Don't ask me why.
 		species_allowed = list("Tajara")
 
-	taj_ears_tufts
-		name = "Tajara Tufts"
-		icon_state = "ears_tufts"
-		species_allowed = list("Tajara")
-
 	taj_ears_clean
 		name = "Tajara Clean"
 		icon_state = "hair_clean"
