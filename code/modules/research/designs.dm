@@ -1067,17 +1067,17 @@ CIRCUITS BELOW
 	build_path = /obj/item/weapon/airlock_electronics/secure
 	sort_string = "JDAAA"
 
-/datum/design/circuit/ordercomp
+/datum/design/circuit/order
 	name = "supply ordering console"
 	id = "ordercomp"
-	build_path = /obj/item/weapon/circuitboard/ordercomp
+	build_path = /obj/item/weapon/circuitboard/order
 	sort_string = "KAAAA"
 
-/datum/design/circuit/supplycomp
+/datum/design/circuit/supply
 	name = "supply control console"
 	id = "supplycomp"
 	req_tech = list(TECH_DATA = 3)
-	build_path = /obj/item/weapon/circuitboard/supplycomp
+	build_path = /obj/item/weapon/circuitboard/order/supply
 	sort_string = "KAAAB"
 
 /datum/design/circuit/seed_extractor
