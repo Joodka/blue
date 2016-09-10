@@ -926,38 +926,6 @@
 		src.custom_pain("You feel a stabbing pain in your chest!", 1)
 		L.damage = L.min_bruised_damage
 
-/*
-/mob/living/carbon/human/verb/simulate()
-	set name = "sim"
-	set background = 1
-
-	var/damage = input("Wound damage","Wound damage") as num
-
-	var/germs = 0
-	var/tdamage = 0
-	var/ticks = 0
-	while (germs < 2501 && ticks < 100000 && round(damage/10)*20)
-		log_misc("VIRUS TESTING: [ticks] : germs [germs] tdamage [tdamage] prob [round(damage/10)*20]")
-		ticks++
-		if (prob(round(damage/10)*20))
-			germs++
-		if (germs == 100)
-			world << "Reached stage 1 in [ticks] ticks"
-		if (germs > 100)
-			if (prob(10))
-				damage++
-				germs++
-		if (germs == 1000)
-			world << "Reached stage 2 in [ticks] ticks"
-		if (germs > 1000)
-			damage++
-			germs++
-		if (germs == 2500)
-			world << "Reached stage 3 in [ticks] ticks"
-	world << "Mob took [tdamage] tox damage"
-*/
-//returns 1 if made bloody, returns 0 otherwise
-
 /mob/living/carbon/human/add_blood(mob/living/carbon/human/M as mob)
 	if (!..())
 		return 0
@@ -977,12 +945,31 @@
 
 /mob/living/carbon/human/clean_blood(var/clean_feet)
 	.=..()
+
+	if(gloves)
+		if(gloves.clean_blood())
+			update_inv_gloves()
+		gloves.germ_level = 0
+	else
+		if(bloody_hands)
+			bloody_hands = 0
+			update_inv_gloves()
+		germ_level = 0
+
 	gunshot_residue = null
-	if(clean_feet && !shoes && istype(feet_blood_DNA, /list) && feet_blood_DNA.len)
-		feet_blood_color = null
-		qdel(feet_blood_DNA)
-		update_inv_shoes(1)
-		return 1
+
+	if(clean_feet)
+		if(shoes)
+			if(shoes.clean_blood())
+				update_inv_shoes()
+		else
+			if(feet_blood_DNA && feet_blood_DNA.len)
+				feet_blood_color = null
+				feet_blood_DNA.Cut()
+				update_inv_shoes()
+
+	return 1
+
 
 /mob/living/carbon/human/get_visible_implants(var/class = 0)
 
@@ -993,6 +980,7 @@
 				visible_implants += O
 
 	return(visible_implants)
+
 
 /mob/living/carbon/human/embedded_needs_process()
 	for(var/obj/item/organ/external/organ in src.organs)

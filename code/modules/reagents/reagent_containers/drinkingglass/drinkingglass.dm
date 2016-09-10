@@ -9,6 +9,7 @@
 	name = "glass" // Name when empty
 	desc = "A generic drinking glass." // Description when empty
 	icon = DRINK_ICON_FILE
+	icon_state = "square"
 	var/base_icon = "square" // Base icon name
 	volume = 30
 
@@ -64,7 +65,7 @@
 
 /obj/item/weapon/reagent_containers/glass/drinking/New()
 	..()
-	icon_state = base_icon
+	base_icon = icon_state
 
 /obj/item/weapon/reagent_containers/glass/drinking/on_reagent_change()
 	..()

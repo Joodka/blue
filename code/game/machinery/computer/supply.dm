@@ -24,11 +24,6 @@
 	var/hacked = 0
 	var/can_order_contraband = 0
 
-/obj/machinery/computer/order/New()
-	..()
-	spawn(4)
-		shuttle = supply_controller.shuttle
-
 /obj/machinery/computer/order/attack_ai(var/mob/user as mob)
 	return attack_hand(user)
 
@@ -74,7 +69,9 @@
 
 /obj/machinery/computer/order/supply/update_head()
 	head = "<b>Supply points:</b> [supply_controller.points]"
-	if (shuttle)
+	if(!shuttle && supply_controller)
+		shuttle = supply_controller.shuttle
+	if(shuttle)
 		head += "<br><b>Supply shuttle</b>: "
 		if(shuttle.has_arrive_time())
 			head += "In transit ([shuttle.eta_minutes()] Mins.)"

@@ -218,6 +218,12 @@
 	item_state = "r_suit"
 	worn_state = "red_suit"
 
+/obj/item/clothing/under/snake
+	name = "tactical paratrooper jumpsuit"
+	desc = "Good protected tactical suit for spying around here."
+	icon_state = "snake"
+	item_state = "gy_suit"
+
 /obj/item/clothing/under/schoolgirl
 	name = "schoolgirl uniform"
 	desc = "It's just like one of my Japanese animes!"
