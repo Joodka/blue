@@ -32,9 +32,13 @@
 	icon_state = "with_grille_reinforced"
 	border_type = /obj/structure/window/reinforced
 
-/turf/simulated/floor/with_grille/tinted
+/turf/simulated/floor/with_grille/polarized
 	icon_state = "with_grille_tinted"
 	border_type = /obj/structure/window/reinforced/polarized
+
+/turf/simulated/floor/with_grille/tinted
+	icon_state = "with_grille_tinted"
+	border_type = /obj/structure/window/reinforced/tinted
 
 /turf/simulated/shuttle
 	name = "shuttle"
