@@ -22,6 +22,12 @@
 	icon_state = "wood"
 	initial_flooring = /decl/flooring/wood
 
+/turf/simulated/floor/wood/remade
+	icon_state = "wood_new"
+
+/turf/simulated/floor/wood/remade_dark
+	icon_state = "wood_new_dark"
+
 /turf/simulated/floor/grass
 	name = "grass patch"
 	icon = 'icons/turf/flooring/grass.dmi'

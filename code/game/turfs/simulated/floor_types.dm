@@ -29,9 +29,11 @@
 			blocks_air = 0
 
 /turf/simulated/floor/with_grille/reinforced
+	icon_state = "with_grille_reinforced"
 	border_type = /obj/structure/window/reinforced
 
 /turf/simulated/floor/with_grille/tinted
+	icon_state = "with_grille_tinted"
 	border_type = /obj/structure/window/reinforced/polarized
 
 /turf/simulated/shuttle
