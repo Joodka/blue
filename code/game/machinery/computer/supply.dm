@@ -8,10 +8,6 @@
 	var/head = null
 	var/reqtime = 0 //Cooldown for requisitions - Quarxink
 	var/last_viewed_group = "categories"
-	var/list/menu_items = list(
-		"Request items"="order=categories",
-		"View approved orders"="vieworders=1",
-		"View requests"="viewrequests=1")
 
 /obj/machinery/computer/order/supply
 	name = "supply control console"
@@ -33,9 +29,7 @@
 	user.set_machine(src)
 	update_head()
 	if(!temp)
-		for(var/menu_item in menu_items)
-			temp += "<A href='?src=\ref[src];[menu_items[menu_item]]'>[menu_item]</A><BR><BR>"
-		temp += "<A href='?src=\ref[user];mach_close=computer'>Close</A>"
+		Handle_Topic(list("viewrequests"=1))
 
 	user << browse(head + temp, "window=computer;size=575x450")
 	onclose(user, "computer")
@@ -50,6 +44,8 @@
 
 /obj/machinery/computer/order/proc/update_head()
 	head = "<b>Supply points:</b> [supply_controller.points]"
+	if(!shuttle && supply_controller)
+		shuttle = supply_controller.shuttle
 	if (shuttle)
 		head += "<br><b>Supply shuttle</b>:"
 		if(shuttle.has_arrive_time())
@@ -60,10 +56,9 @@
 			head += "Away"
 
 	head += {"<hr>
-		<A href='?src=\ref[src];mainmenu=1'>Main menu</A> |
-		<A href='?src=\ref[src];order=categories'>New request</A> |
-		<A href='?src=\ref[src];vieworders=1'>View orders</A> |
-		<A href='?src=\ref[src];viewrequests=1'>View request</A>
+		<A href='?src=\ref[src];order=categories'>Categories</A> |
+		<A href='?src=\ref[src];viewrequests=1'>View request</A> |
+		<A href='?src=\ref[src];vieworders=1'>View orders</A>
 		<hr><br>"}
 
 
@@ -75,29 +70,37 @@
 		head += "<br><b>Supply shuttle</b>: "
 		if(shuttle.has_arrive_time())
 			head += "In transit ([shuttle.eta_minutes()] Mins.)"
-		else if(shuttle.at_station())
-			if (shuttle.docking_controller)
-				switch(shuttle.docking_controller.get_docking_status())
-					if("docked") 	head += "Docked at station"
-					if("undocked")	head += "Undocked from station"
-					if("docking")	head += "Docking with station"
-					if("undocking")	head += "Undocking from station"
-			else
-				head += "Station"
 		else
-			head += "Away<br>"
-			if (shuttle.can_launch())
-				head += "<A href='?src=\ref[src];send=1'>Request supply shuttle</A>"
-			else if (shuttle.can_cancel())
-				head += "<A href='?src=\ref[src];cancel_send=1'>Cancel request</A>"
+			if(shuttle.at_station())
+				if (shuttle.docking_controller)
+					switch(shuttle.docking_controller.get_docking_status())
+						if("docked") 	head += "Docked at station"
+						if("undocked")	head += "Undocked from station"
+						if("docking")	head += "Docking with station"
+						if("undocking")	head += "Undocking from station"
+				else
+					head += "Station"
+				head += "<br>"
+				if (shuttle.can_launch())
+					head += "<A href='?src=\ref[src];send=1'>Send away</A>"
+				else if (shuttle.can_cancel())
+					head += "<A href='?src=\ref[src];cancel_send=1'>Cancel request</A>"
+				else
+					head += "*Shuttle is busy*"
+
 			else
-				head += "*Shuttle is busy*"
+				head += "Away<br>"
+				if (shuttle.can_launch())
+					head += "<A href='?src=\ref[src];send=1'>Request supply shuttle</A>"
+				else if (shuttle.can_cancel())
+					head += "<A href='?src=\ref[src];cancel_send=1'>Cancel request</A>"
+				else
+					head += "*Shuttle is busy*"
 
 	head += {"<hr>
-		<A href='?src=\ref[src];mainmenu=1'>Main menu</A> |
-		<A href='?src=\ref[src];order=categories'>New request</A> |
-		<A href='?src=\ref[src];vieworders=1'>View orders</A> |
-		<A href='?src=\ref[src];viewrequests=1'>View request</A>
+		<A href='?src=\ref[src];order=categories'>Categories</A> |
+		<A href='?src=\ref[src];viewrequests=1'>View request</A> |
+		<A href='?src=\ref[src];vieworders=1'>View orders</A>
 		<hr><br>"}
 
 
@@ -105,18 +108,20 @@
 	if(..())
 		return 1
 
+/*
 	if(in_range(src, usr) || istype(usr, /mob/living/silicon))
 		usr.set_machine(src)
+*/
 
 	update_head()
 
-	Handle_Topic( href, href_list )
+	Handle_Topic(href_list )
 
 	add_fingerprint(usr)
 	updateUsrDialog()
 	return
 
-/obj/machinery/computer/order/proc/Handle_Topic( href, href_list )
+/obj/machinery/computer/order/proc/Handle_Topic( href_list )
 
 	if(href_list["order"])
 		if(href_list["order"] == "categories")
@@ -181,41 +186,37 @@
 
 		if ( istype(src, /obj/machinery/computer/order/supply) )
 			temp = "Order request placed.<BR>"
-			temp += "<BR><A href='?src=\ref[src];order=[last_viewed_group]'>Back</A> | <A href='?src=\ref[src];confirmorder=[O.ordernum]'>Authorize Order</A>"
+			temp +="<BR><A href='?src=\ref[src];order=[last_viewed_group]'>Back</A> |\
+				 	<A href='?src=\ref[src];confirmorder=[O.ordernum]'>Authorize Order</A> |\
+				 	<A href='?src=\ref[src];order=categories'>All categories</A>"
 		else
 			temp = "Thanks for your request. The cargo team will process it as soon as possible.<BR>"
-			temp += "<BR><A href='?src=\ref[src];order=[last_viewed_group]'>Back</A>"
+			temp +="<BR><A href='?src=\ref[src];order=[last_viewed_group]'>Back</A> | \
+					<A href='?src=\ref[src];order=categories'>All categories</A>"
 
 	else if (href_list["vieworders"])
 		temp = "<b>Current approved orders: </b><BR><BR>"
 		for(var/S in supply_controller.shoppinglist)
 			var/datum/supply_order/SO = S
 			temp += "#[SO.ordernum] - [SO.object.name] approved by [SO.orderedby][SO.comment ? " ([SO.comment])":""]<BR>"
-		temp += "<BR><A href='?src=\ref[src];mainmenu=1'>OK</A>"
 
 	else if (href_list["viewrequests"])
 		temp = "<b>Current requests: </b><BR><BR>"
 		for(var/S in supply_controller.requestlist)
 			var/datum/supply_order/SO = S
 			temp += "#[SO.ordernum] - [SO.object.name] requested by [SO.orderedby]<BR>"
-		temp += "<BR><A href='?src=\ref[src];mainmenu=1'>OK</A>"
 
-	else if (href_list["mainmenu"])
-		last_viewed_group = "main menu"
-		temp = null
 
-/obj/machinery/computer/order/supply/Handle_Topic( href, href_list )
+/obj/machinery/computer/order/supply/Handle_Topic( href_list )
 	//Calling the shuttle
 	if(href_list["send"])
 		if(shuttle.at_station())
 			if (shuttle.forbidden_atoms_check())
-				temp = "For safety reasons the automated supply shuttle cannot transport live organisms, classified nuclear weaponry or homing beacons.<BR><BR><A href='?src=\ref[src];mainmenu=1'>OK</A>"
+				temp = "For safety reasons the automated supply shuttle cannot transport live organisms, classified nuclear weaponry or homing beacons."
 			else
 				shuttle.launch(src)
-//				temp = "Initiating launch sequence. \[<span class='warning'><A href='?src=\ref[src];force_send=1'>Force Launch</A></span>\]<BR><BR><A href='?src=\ref[src];mainmenu=1'>OK</A>"
 		else
 			shuttle.launch(src)
-//			temp = "The supply shuttle has been called and will arrive in approximately [round(supply_controller.movetime/600,1)] minutes.<BR><BR><A href='?src=\ref[src];mainmenu=1'>OK</A>"
 			post_signal("supply")
 
 	else if (href_list["cancel_send"])
@@ -228,9 +229,10 @@
 		for(var/S in supply_controller.requestlist)
 			var/datum/supply_order/SO = S
 			temp += "#[SO.ordernum] - [SO.object.name] requested by [SO.orderedby].<BR>"
-			temp += "<span class='cost'>Cost: [SO.object.cost] supply points. <A href='?src=\ref[src];confirmorder=[SO.ordernum]'>Approve</A> <A href='?src=\ref[src];rreq=[SO.ordernum]'>Remove</A><BR></span>"
+			temp += "<span class='cost'>Cost: [SO.object.cost] supply points. \
+					<A href='?src=\ref[src];confirmorder=[SO.ordernum]'>\[Approve]</A> \
+					<A href='?src=\ref[src];rreq=[SO.ordernum]'>\[Remove]</A><BR></span>"
 		temp += "<BR><A href='?src=\ref[src];clearreq=1'>Clear list</A>"
-		temp += "<BR><A href='?src=\ref[src];mainmenu=1'>OK</A>"
 
 	else if(href_list["confirmorder"])
 		//Find the correct supply_order datum
@@ -250,7 +252,7 @@
 					temp = "Thanks for your order.<BR>"
 				else
 					temp = "Not enough supply points.<BR>"
-				temp += "<BR><A href='?src=\ref[src];[last_viewed_group?"order=[last_viewed_group]":"viewrequests=1"]'>Back</A> <A href='?src=\ref[src];mainmenu=1'>Main Menu</A>"
+				temp += "<BR><A href='?src=\ref[src];[last_viewed_group?"order=[last_viewed_group]":"viewrequests=1"]'>Back</A>"
 				break
 
 	else if (href_list["rreq"])
@@ -262,14 +264,12 @@
 				supply_controller.requestlist.Cut(i,i+1)
 				temp = "Request removed.<BR>"
 				break
-		temp += "<BR><A href='?src=\ref[src];viewrequests=1'>Back</A> <A href='?src=\ref[src];mainmenu=1'>Main Menu</A>"
+		temp += "<BR><A href='?src=\ref[src];viewrequests=1'>Back</A>"
 
 	else if (href_list["clearreq"])
 		supply_controller.requestlist.Cut()
-		temp = "List cleared.<BR>"
-		temp += "<BR><A href='?src=\ref[src];mainmenu=1'>OK</A>"
 	else
-		..(href, href_list)
+		..(href_list)
 
 
 /obj/machinery/computer/order/proc/show_pack( var/supply_name )
